@@ -1,6 +1,10 @@
 package com.alurachallengers.forohub.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +23,25 @@ public class Topico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Este campo es obligatorio.")
     private String titulo;
+
+    @NotNull(message = "Este campo es obligatorio.")
     private String mensaje;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate fechaCreacion;
+
+    //@JsonIgnore
     private boolean status;
 
     @ManyToOne
+    @NotNull(message = "Este campo es obligatorio.")
+    @JsonBackReference
     private Usuario autor;
 
+    @PrePersist
+    protected void onCreate(){
+        fechaCreacion = LocalDate.now();
+    }
 }

@@ -1,6 +1,7 @@
 package com.alurachallengers.forohub.serviceImpl;
 
 import com.alurachallengers.forohub.exceptions.TopicoDuplicadoException;
+import com.alurachallengers.forohub.exceptions.TopicoNoExistsException;
 import com.alurachallengers.forohub.model.Topico;
 import com.alurachallengers.forohub.model.Usuario;
 import com.alurachallengers.forohub.model.dtos.TopicoDTO;
@@ -9,6 +10,8 @@ import com.alurachallengers.forohub.repository.TopicoRepository;
 import com.alurachallengers.forohub.repository.UsuarioRepository;
 import com.alurachallengers.forohub.service.TopicoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,15 +30,33 @@ public class TopicoServiceImpl implements TopicoService {
     private TopicoMapper topicoMapper;
 
     @Override
-    public List<Topico> getAllTopicos() {
-        return topicoRepository.findAll();
+    public List<TopicoDTO> getAllTopicosDTO() {
+        return topicoMapper.toTopicoDTOs(topicoRepository.findAll());
+    }
+
+    @Override
+    public Page<TopicoDTO> getAllTopicosDTO(Pageable pageable) {
+        return topicoMapper.toTopicoDTOs(topicoRepository.findAll(pageable));
+    }
+
+    @Override
+    public Optional<TopicoDTO> getTopicoById(Long id) {
+
+        Optional<TopicoDTO> topicoDTO = topicoRepository.findById(id).map(topicoMapper::toTopicoDTO);
+
+        if (topicoDTO.isPresent()){
+            return topicoDTO;
+        }
+        else {
+            throw new TopicoNoExistsException("No existe tal tópico.");
+        }
     }
 
     @Override
     public TopicoDTO createTopico(long usuarioId, TopicoDTO topicoDTO) {
         //v1:
         Optional<Topico> topicoRepetido = topicoRepository.
-                findByTituloAndMensaje(topicoDTO.getTitulo(), topicoDTO.getMensaje());
+                findByTituloAndMensaje(topicoDTO.titulo(), topicoDTO.mensaje());
 
         if (topicoRepetido.isPresent()){
             throw new TopicoDuplicadoException("El tópico con este título y contenido ya existe.");
@@ -49,6 +70,41 @@ public class TopicoServiceImpl implements TopicoService {
 
             Topico nuevoTopico = topicoRepository.save(topico);
             return topicoMapper.toTopicoDTO(nuevoTopico);
+        }
+    }
+
+    @Override
+    public Optional<TopicoDTO> updateTopico(Long id, TopicoDTO topicoDTO) {
+        if (topicoRepository.existsById(id)){
+            Topico topicoAModificar = topicoRepository.findById(id)
+                    .orElseThrow(() -> new TopicoNoExistsException("Tópico no existe"));
+
+            if (topicoDTO.titulo() != null){
+                topicoAModificar.setTitulo(topicoDTO.titulo());
+            }
+
+            if (topicoDTO.mensaje() != null){
+                topicoAModificar.setMensaje(topicoDTO.mensaje());
+            }
+
+            if (topicoDTO.estado() != null){
+                topicoAModificar.setEstado(topicoDTO.estado());
+            }
+
+            Topico topicoModificado = topicoRepository.save(topicoAModificar);
+            return Optional.of(topicoMapper.toTopicoDTO(topicoModificado));
+        }
+
+        throw new TopicoNoExistsException("El Tópico seleccionado no existe");
+    }
+
+    @Override
+    public void deleteTopico(Long id) {
+        if(topicoRepository.existsById(id)){
+            topicoRepository.deleteById(id);
+        }
+        else {
+            throw new TopicoNoExistsException("El Tópico seleccionado no existe");
         }
     }
 }

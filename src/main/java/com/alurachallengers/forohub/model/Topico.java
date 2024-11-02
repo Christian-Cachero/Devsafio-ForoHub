@@ -1,5 +1,6 @@
 package com.alurachallengers.forohub.model;
 
+import com.alurachallengers.forohub.model.enums.EstadoTopico;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,11 +34,12 @@ public class Topico {
     private LocalDate fechaCreacion;
 
     //@JsonIgnore
-    private boolean status;
+    @Enumerated(EnumType.STRING)
+    private EstadoTopico estado;
 
     @ManyToOne
     @NotNull(message = "Este campo es obligatorio.")
-    @JsonBackReference
+    //@JsonBackReference
     private Usuario autor;
 
     @PrePersist

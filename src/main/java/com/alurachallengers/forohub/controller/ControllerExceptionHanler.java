@@ -1,6 +1,8 @@
 package com.alurachallengers.forohub.controller;
 
+import com.alurachallengers.forohub.exceptions.TopicoNoExistsException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,5 +26,9 @@ public class ControllerExceptionHanler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+    @ExceptionHandler(TopicoNoExistsException.class)
+    public ResponseEntity<String> handleTopicoNoExistsException(){
+        return new ResponseEntity<>("No existe tal Tópico", HttpStatus.NOT_FOUND);
     }
 }

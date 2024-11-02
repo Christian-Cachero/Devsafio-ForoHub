@@ -1,6 +1,8 @@
 package com.alurachallengers.forohub.serviceImpl;
 
 import com.alurachallengers.forohub.model.Usuario;
+import com.alurachallengers.forohub.model.dtos.UsuarioDTO;
+import com.alurachallengers.forohub.model.mappers.UsuarioMapper;
 import com.alurachallengers.forohub.repository.UsuarioRepository;
 import com.alurachallengers.forohub.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
     @Override
-    public List<Usuario> getAllUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> getAllUsuariosDTO() {
+        return usuarioMapper.toUsuariosDTOs(usuarioRepository.findAll());
     }
 
     @Override

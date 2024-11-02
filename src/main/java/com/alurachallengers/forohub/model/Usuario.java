@@ -35,6 +35,6 @@ public class Usuario {
     private Integer contrasena;
 
     @OneToMany(mappedBy = "autor")
-    @JsonManagedReference
+    //@JsonManagedReference
     private List<Topico> topicos = new ArrayList<>();
 }

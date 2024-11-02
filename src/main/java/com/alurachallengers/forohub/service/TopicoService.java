@@ -2,21 +2,23 @@ package com.alurachallengers.forohub.service;
 
 import com.alurachallengers.forohub.model.Topico;
 import com.alurachallengers.forohub.model.dtos.TopicoDTO;
+import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
 public interface TopicoService {
 
-    List<Topico> getAllTopicos();
+    List<TopicoDTO> getAllTopicosDTO();
+
+    Page<TopicoDTO> getAllTopicosDTO(Pageable pageable);
 
     TopicoDTO createTopico(long usuarioId, TopicoDTO topicoDTO);
 
+    Optional<TopicoDTO> getTopicoById(Long id);
 
-/*    Optional<Topico> getTopicoById(Long id);
-
-    Optional<Topico> updateTopico(Long id, Topico topico);
-
-    void deleteTopico(Long id);*/
+    Optional<TopicoDTO> updateTopico(Long id, TopicoDTO topicoDTO);
+    void deleteTopico(Long id);
 
 }

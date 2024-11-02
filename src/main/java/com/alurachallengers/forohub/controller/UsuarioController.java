@@ -1,6 +1,7 @@
 package com.alurachallengers.forohub.controller;
 
 import com.alurachallengers.forohub.model.Usuario;
+import com.alurachallengers.forohub.model.dtos.UsuarioDTO;
 import com.alurachallengers.forohub.serviceImpl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,8 @@ public class UsuarioController {
     private UsuarioServiceImpl usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getUsuarios(){
-        return new ResponseEntity<>(usuarioService.getAllUsuarios(), HttpStatus.OK);
+    public ResponseEntity<List<UsuarioDTO>> getUsuarios(){
+        return new ResponseEntity<>(usuarioService.getAllUsuariosDTO(), HttpStatus.OK);
     }
     @PostMapping
     public Optional<ResponseEntity<Optional<Usuario>>> crearUsuario(@RequestBody Usuario usuario){

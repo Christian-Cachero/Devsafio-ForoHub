@@ -6,18 +6,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 public class Topico {
 
     @Id
@@ -30,6 +31,7 @@ public class Topico {
     @NotNull(message = "Este campo es obligatorio.")
     private String mensaje;
 
+    @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate fechaCreacion;
 
@@ -42,8 +44,8 @@ public class Topico {
     //@JsonBackReference
     private Usuario autor;
 
-    @PrePersist
+/*    @PrePersist
     protected void onCreate(){
         fechaCreacion = LocalDate.now();
-    }
+    }*/
 }

@@ -26,14 +26,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Optional<Usuario> createUsuario(Usuario usuario) {
+    public Usuario createUsuario(UsuarioDTO usuario) {
 
-        if (validadUsuarioPorEmail(usuario) == null) {
-            return Optional.of(usuarioRepository.save(usuario));
-        }
-        else {
-            return Optional.empty();
-        }
+
+
+            return usuarioRepository.save(usuario);
+
     }
 
     public Usuario validadUsuarioPorEmail(Usuario usuario){

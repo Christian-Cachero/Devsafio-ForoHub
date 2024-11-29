@@ -6,24 +6,27 @@ import com.alurachallengers.forohub.serviceImpl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/usuarios")
+//@PreAuthorize("denyAll()")
 public class UsuarioController {
 
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
     @GetMapping
+    //@PreAuthorize("permiteAll()")
     public ResponseEntity<List<UsuarioDTO>> getUsuarios(){
         return new ResponseEntity<>(usuarioService.getAllUsuariosDTO(), HttpStatus.OK);
     }
     @PostMapping
-    public Optional<ResponseEntity<Optional<Usuario>>> crearUsuario(@RequestBody Usuario usuario){
-        return Optional.of(new ResponseEntity<>(usuarioService.createUsuario(usuario), HttpStatus.CREATED));
+    //@PreAuthorize("hasAuthority('READ')")
+    public ResponseEntity<Usuario> crearUsuario(@RequestBody UsuarioDTO usuario){
+        return new ResponseEntity<>(usuarioService.createUsuario(usuario), HttpStatus.CREATED);
     }
 }

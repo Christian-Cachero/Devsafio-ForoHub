@@ -1,22 +1,25 @@
 package com.alurachallengers.forohub.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class Usuario {
+@AllArgsConstructor
+@DynamicInsert
+@DynamicUpdate
+public class Usuario implements UserDetails {
 
     /*TODO: hacer un DTO para que no me de un overflow y
      * desactivar las anotaciones que deje de momento para esto*/
@@ -32,9 +35,24 @@ public class Usuario {
     private String email;
 
     @NotNull(message = "Este campo es obligatorio.")
-    private Integer contrasena;
+    private String clave;
 
     @OneToMany(mappedBy = "autor")
     //@JsonManagedReference
     private List<Topico> topicos = new ArrayList<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return clave;
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.alurachallengers.forohub.model.mappers;
 
+
 import com.alurachallengers.forohub.model.Usuario;
+import com.alurachallengers.forohub.model.dtos.UsuarioAuthDTO;
 import com.alurachallengers.forohub.model.dtos.UsuarioDTO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -10,16 +12,16 @@ import org.mapstruct.Mappings;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface UsuarioMapper {
+public interface UsuarioAuthMapper {
 
     @Mappings({
-            @Mapping(source = "id", target = "id"),
             @Mapping(source = "nombre", target = "nombre"),
-            @Mapping(source = "email", target = "email")
+            @Mapping(source = "email", target = "email"),
+            @Mapping(source = "clave", target = "clave")
     })
-    Usuario toUsuario(UsuarioDTO usuarioDTO);
+    Usuario toUsuario(UsuarioAuthDTO usuarioAuthDTO);
 
-    List<UsuarioDTO> toUsuariosDTOs(List<Usuario> usuarios);
+    //List<UsuarioAuthDTO> toUsuariosDTOs(List<Usuario> usuarios);
     @InheritInverseConfiguration
-    UsuarioDTO toUsuarioDTO(Usuario usuario);
+    UsuarioDTO toUsuarioAuthDTO(Usuario usuario);
 }

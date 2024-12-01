@@ -1,6 +1,7 @@
 package com.alurachallengers.forohub.controller;
 
 import com.alurachallengers.forohub.model.Usuario;
+import com.alurachallengers.forohub.model.dtos.UsuarioAuthDTO;
 import com.alurachallengers.forohub.model.dtos.UsuarioDTO;
 import com.alurachallengers.forohub.serviceImpl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UsuarioController {
     }
     @PostMapping
     //@PreAuthorize("hasAuthority('READ')")
-    public ResponseEntity<Usuario> crearUsuario(@RequestBody UsuarioDTO usuario){
+    public ResponseEntity<Usuario> crearUsuario(@RequestBody UsuarioAuthDTO usuario){
         return new ResponseEntity<>(usuarioService.createUsuario(usuario), HttpStatus.CREATED);
     }
 }

@@ -31,8 +31,8 @@ public class Topico {
     @NotNull(message = "Este campo es obligatorio.")
     private String mensaje;
 
-    @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @CreationTimestamp
     private LocalDate fechaCreacion;
 
     //@JsonIgnore

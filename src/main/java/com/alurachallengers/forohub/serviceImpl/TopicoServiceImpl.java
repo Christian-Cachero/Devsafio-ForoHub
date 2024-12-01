@@ -54,23 +54,22 @@ public class TopicoServiceImpl implements TopicoService {
 
     @Override
     public TopicoDTO createTopico(long usuarioId, TopicoDTO topicoDTO) {
-        //v1:
-        Optional<Topico> topicoRepetido = topicoRepository.
-                findByTituloAndMensaje(topicoDTO.titulo(), topicoDTO.mensaje());
-
-        if (topicoRepetido.isPresent()){
+        // Verificar si el tópico ya existe
+        if (topicoRepository.findByTituloAndMensaje(topicoDTO.titulo(), topicoDTO.mensaje()).isPresent()) {
             throw new TopicoDuplicadoException("El tópico con este título y contenido ya existe.");
         }
-        else {
-            Usuario autor = usuarioRepository.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            Topico topico = topicoMapper.toTopico(topicoDTO);
-            topico.setAutor(autor);
+        // Obtener el autor
+        Usuario autor = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            Topico nuevoTopico = topicoRepository.save(topico);
-            return topicoMapper.toTopicoDTO(nuevoTopico);
-        }
+        // Crear y guardar el nuevo tópico
+        Topico topico = topicoMapper.toTopico(topicoDTO);
+        topico.setAutor(autor);
+        Topico nuevoTopico = topicoRepository.save(topico);
+
+        // Retornar el DTO del nuevo tópico
+        return topicoMapper.toTopicoDTO(nuevoTopico);
     }
 
     @Override

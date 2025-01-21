@@ -4,6 +4,7 @@ import com.alurachallengers.forohub.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,7 +30,7 @@ public class SecurityConfig {
     private UsuarioRepository usuarioRepository;
 
     //manera normal:
-/*    @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -37,47 +38,49 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
                     //configurar los publicos primeros.
-                    http.requestMatchers(HttpMethod.GET, "/topicos").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll();
                     //luego los privados.
-                    http.requestMatchers(HttpMethod.GET, "/auth/user").hasAuthority("CREATE");
+                    http.requestMatchers(HttpMethod.GET, "/api/topicos/**").hasRole("USER");
+                    http.requestMatchers(HttpMethod.POST, "/api/topicos/**").hasRole("USER");
+                    http.requestMatchers(HttpMethod.PUT, "/api/topicos/**").hasRole("USER");
+                    http.requestMatchers(HttpMethod.DELETE, "/api/topicos/**").hasRole("USER");
+
                     //el resto de endpoints - no especificado (siempre y cuando tengas acceso).
 
-                    *//*authenticated(): con credenciales correctas to-do ok
-                     *denyAll()si no esta especificado en los endpoints de arriba no hay trato.*//*
+                    /*authenticated(): con credenciales correctas to-do ok
+                     *denyAll()si no esta especificado en los endpoints de arriba no hay trato.*/
                     http.anyRequest().denyAll();
                 })
                 .build();
-    }*/
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> usuarioRepository.findByEmail(username);
     }
 
-    @Bean
+
+    /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
+    /*Spring Security usa uno muy similar a este por defecto con un Dao de provider
+     * si planeas usar Dao como provider es mejor dejar que SpringSecurity lo haga por vos.*/
+    /*@Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
-    }
+    }*/
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(4);
+        return new BCryptPasswordEncoder();
     }
 }

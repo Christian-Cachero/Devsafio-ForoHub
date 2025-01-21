@@ -10,5 +10,5 @@ public interface UsuarioService {
 
 
     List<UsuarioDTO> getAllUsuariosDTO();
-    Usuario createUsuario(UsuarioAuthDTO usuario);
+    Usuario createUsuario(Usuario usuario);
 }

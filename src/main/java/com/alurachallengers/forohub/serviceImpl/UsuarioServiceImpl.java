@@ -1,14 +1,13 @@
 package com.alurachallengers.forohub.serviceImpl;
 
 import com.alurachallengers.forohub.model.Usuario;
-import com.alurachallengers.forohub.model.dtos.UsuarioAuthDTO;
 import com.alurachallengers.forohub.model.dtos.UsuarioDTO;
 import com.alurachallengers.forohub.model.mappers.UsuarioAuthMapper;
 import com.alurachallengers.forohub.model.mappers.UsuarioMapper;
 import com.alurachallengers.forohub.repository.UsuarioRepository;
 import com.alurachallengers.forohub.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioAuthMapper usuarioAuthMapper;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UsuarioDTO> getAllUsuariosDTO() {
@@ -34,16 +33,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario createUsuario(UsuarioAuthDTO usuarioAuthDTO) {
-        if (validarUsuarioPorEmail(usuarioAuthMapper.toUsuario(usuarioAuthDTO)) != null){
+    public Usuario createUsuario(Usuario usuario) {
+        if (validarUsuarioPorEmail(usuario) != null) {
             throw new RuntimeException("El usuario con este mail ya existe");
         }
 
-        Usuario nuevoUsuario = usuarioAuthMapper.toUsuario(usuarioAuthDTO);
+        usuario.setClave(passwordEncoder.encode(usuario.getClave()));
 
-        nuevoUsuario.setClave(passwordEncoder.encode(usuarioAuthDTO.clave()));
-
-        return usuarioRepository.save(nuevoUsuario);
+        return usuarioRepository.save(usuario);
     }
 
     public Usuario validarUsuarioPorEmail(Usuario usuario){

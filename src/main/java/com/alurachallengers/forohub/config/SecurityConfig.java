@@ -1,13 +1,11 @@
 package com.alurachallengers.forohub.config;
 
-import com.alurachallengers.forohub.repository.UsuarioRepository;
+import com.alurachallengers.forohub.config.filter.JwtTokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,11 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private JwtTokenValidator SecurityFilter;
 
     //manera normal:
     @Bean
@@ -39,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
                     //configurar los publicos primeros.
                     http.requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/auth/loging").permitAll();
                     //luego los privados.
                     http.requestMatchers(HttpMethod.GET, "/api/topicos/**").hasRole("USER");
                     http.requestMatchers(HttpMethod.POST, "/api/topicos/**").hasRole("USER");
@@ -51,6 +48,7 @@ public class SecurityConfig {
                      *denyAll()si no esta especificado en los endpoints de arriba no hay trato.*/
                     http.anyRequest().denyAll();
                 })
+                .addFilterBefore(SecurityFilter, BasicAuthenticationFilter.class)
                 .build();
     }
 

@@ -66,8 +66,8 @@ public class TopicoController {
 
         if (currentTopicoDto.isPresent()) {
             topicoService.deleteTopico(id);
-            return new ResponseEntity<>("El topico fue eliminado correctamente", HttpStatus.OK);
+            return new ResponseEntity<>("El tópico fue eliminado correctamente", HttpStatus.OK);
         }
-        return new ResponseEntity<>("El topico ingresado no existe", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("El tópico ingresado no existe", HttpStatus.NOT_FOUND);
     }
 }

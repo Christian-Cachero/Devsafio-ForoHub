@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
-                    //configurar los publicos primeros.
+                    //configurar los públicos primeros.
                     http.requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/loging").permitAll();
                     //luego los privados.

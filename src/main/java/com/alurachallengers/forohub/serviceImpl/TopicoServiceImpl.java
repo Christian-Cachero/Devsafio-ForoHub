@@ -90,6 +90,10 @@ public class TopicoServiceImpl implements TopicoService {
                 topicoAModificar.setEstado(topicoDTO.estado());
             }
 
+            if (topicoDTO.curso() != null){
+                topicoAModificar.setCurso(topicoDTO.curso());
+            }
+
             Topico topicoModificado = topicoRepository.save(topicoAModificar);
             return Optional.of(topicoMapper.toTopicoDTO(topicoModificado));
         }

@@ -1,6 +1,5 @@
 package com.alurachallengers.forohub.service;
 
-import com.alurachallengers.forohub.model.Topico;
 import com.alurachallengers.forohub.model.dtos.TopicoDTO;
 import org.springframework.data.domain.Page;
 
@@ -14,7 +13,7 @@ public interface TopicoService {
 
     Page<TopicoDTO> getAllTopicosDTO(Pageable pageable);
 
-    TopicoDTO createTopico(long usuarioId, TopicoDTO topicoDTO);
+    TopicoDTO createTopico(Long usuarioId, TopicoDTO topicoDTO);
 
     Optional<TopicoDTO> getTopicoById(Long id);
 

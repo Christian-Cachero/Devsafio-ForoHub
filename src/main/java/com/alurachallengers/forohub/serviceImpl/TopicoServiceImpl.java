@@ -1,19 +1,25 @@
 package com.alurachallengers.forohub.serviceImpl;
 
 import com.alurachallengers.forohub.exceptions.TopicoDuplicadoException;
-import com.alurachallengers.forohub.exceptions.TopicoNoExistsException;
+import com.alurachallengers.forohub.exceptions.EntityNoExistsException;
+import com.alurachallengers.forohub.model.Respuesta;
 import com.alurachallengers.forohub.model.Topico;
 import com.alurachallengers.forohub.model.Usuario;
 import com.alurachallengers.forohub.model.dtos.TopicoDTO;
 import com.alurachallengers.forohub.model.mappers.TopicoMapper;
+import com.alurachallengers.forohub.repository.RespuestaRepository;
 import com.alurachallengers.forohub.repository.TopicoRepository;
 import com.alurachallengers.forohub.repository.UsuarioRepository;
 import com.alurachallengers.forohub.service.TopicoService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,18 +54,16 @@ public class TopicoServiceImpl implements TopicoService {
             return topicoDTO;
         }
         else {
-            throw new TopicoNoExistsException("No existe tal tópico.");
+            throw new EntityNoExistsException("No existe tal tópico.");
         }
     }
 
     @Override
-    public TopicoDTO createTopico(long usuarioId, TopicoDTO topicoDTO) {
-        // Verificar si el tópico ya existe
+    public TopicoDTO createTopico(Long usuarioId, TopicoDTO topicoDTO) {
         if (topicoRepository.findByTituloAndMensaje(topicoDTO.titulo(), topicoDTO.mensaje()).isPresent()) {
             throw new TopicoDuplicadoException("El tópico con este título y contenido ya existe.");
         }
 
-        // Obtener el autor
         Usuario autor = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -68,15 +72,25 @@ public class TopicoServiceImpl implements TopicoService {
         topico.setAutor(autor);
         Topico nuevoTopico = topicoRepository.save(topico);
 
-        // Retornar el DTO del nuevo tópico
+
         return topicoMapper.toTopicoDTO(nuevoTopico);
     }
 
+
     @Override
+    @SneakyThrows
     public Optional<TopicoDTO> updateTopico(Long id, TopicoDTO topicoDTO) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long autorId = ((Usuario) authentication.getPrincipal()).getId();
+
         if (topicoRepository.existsById(id)){
             Topico topicoAModificar = topicoRepository.findById(id)
-                    .orElseThrow(() -> new TopicoNoExistsException("Tópico no existe"));
+                    .orElseThrow(() -> new EntityNoExistsException("Tópico no existe"));
+
+            if (!topicoAModificar.getAutor().getId().equals(autorId)) {
+                throw new AccessDeniedException("No eres el autor de este tópico");
+            }
 
             if (topicoDTO.titulo() != null){
                 topicoAModificar.setTitulo(topicoDTO.titulo());
@@ -84,6 +98,10 @@ public class TopicoServiceImpl implements TopicoService {
 
             if (topicoDTO.mensaje() != null){
                 topicoAModificar.setMensaje(topicoDTO.mensaje());
+                // Actualiza vistaPrevia en las respuestas:
+                Optional.ofNullable(topicoAModificar.getRespuestas())
+                        .ifPresent(respuestas -> respuestas
+                                .forEach(respuesta -> respuesta.setVistaPreviaMensaje(topicoDTO.mensaje())));
             }
 
             if (topicoDTO.estado() != null){
@@ -98,7 +116,7 @@ public class TopicoServiceImpl implements TopicoService {
             return Optional.of(topicoMapper.toTopicoDTO(topicoModificado));
         }
 
-        throw new TopicoNoExistsException("El Tópico seleccionado no existe");
+        throw new EntityNoExistsException("El Tópico seleccionado no existe");
     }
 
     @Override
@@ -107,7 +125,7 @@ public class TopicoServiceImpl implements TopicoService {
             topicoRepository.deleteById(id);
         }
         else {
-            throw new TopicoNoExistsException("El Tópico seleccionado no existe");
+            throw new EntityNoExistsException("El Tópico seleccionado no existe");
         }
     }
 }

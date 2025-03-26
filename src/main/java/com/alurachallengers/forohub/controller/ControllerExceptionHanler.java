@@ -1,11 +1,9 @@
 package com.alurachallengers.forohub.controller;
 
-import com.alurachallengers.forohub.exceptions.TopicoNoExistsException;
+import com.alurachallengers.forohub.exceptions.EntityNoExistsException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,9 +28,15 @@ public class ControllerExceptionHanler {
         });
         return errors;
     }
-    @ExceptionHandler(TopicoNoExistsException.class)
-    public ResponseEntity<String> handleTopicoNoExistsException(){
-        return new ResponseEntity<>("No existe tal Tópico", HttpStatus.NOT_FOUND);
+    @ExceptionHandler(EntityNoExistsException.class)
+    public ResponseEntity<String> handleTopicoNoExistsException(EntityNoExistsException ex){
+        String message = ex.getMessage();
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
 }

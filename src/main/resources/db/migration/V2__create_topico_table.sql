@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `devsafio_forohub`.`topico` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `fecha_creacion` DATE NULL DEFAULT NULL,
     `mensaje` VARCHAR(255) NULL DEFAULT NULL,
-    `status` BIT(1) NOT NULL,
+    `estado` BIT(1) NOT NULL,
     `titulo` VARCHAR(255) NULL DEFAULT NULL,
     `autor_id` BIGINT NULL DEFAULT NULL,
     PRIMARY KEY (`id`),

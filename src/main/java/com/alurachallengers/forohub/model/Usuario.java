@@ -41,6 +41,10 @@ public class Usuario implements UserDetails {
     //@JsonManagedReference
     private List<Topico> topicos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    private List<Respuesta> respuestas = new ArrayList<>();
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));

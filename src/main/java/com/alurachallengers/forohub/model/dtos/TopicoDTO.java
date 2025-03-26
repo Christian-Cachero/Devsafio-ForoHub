@@ -4,6 +4,7 @@ import com.alurachallengers.forohub.model.enums.Curso;
 import com.alurachallengers.forohub.model.enums.EstadoTopico;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 public record TopicoDTO(
@@ -13,5 +14,6 @@ public record TopicoDTO(
         Curso curso,
         EstadoTopico estado,
         LocalDate fechaCreacion,
-        UsuarioDTO autor) {
+        UsuarioDTO autor,
+        List<RespuestaDTO> contenidoRespuesta) {
 }

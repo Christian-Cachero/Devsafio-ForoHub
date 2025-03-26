@@ -33,14 +33,23 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
+
+                    http.requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll();
+
                     //configurar los públicos primeros.
                     http.requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/loging").permitAll();
+
+
                     //luego los privados.
-                    http.requestMatchers(HttpMethod.GET, "/api/topicos/**").hasRole("USER");
-                    http.requestMatchers(HttpMethod.POST, "/api/topicos/**").hasRole("USER");
-                    http.requestMatchers(HttpMethod.PUT, "/api/topicos/**").hasRole("USER");
-                    http.requestMatchers(HttpMethod.DELETE, "/api/topicos/**").hasRole("USER");
+                    http.requestMatchers(HttpMethod.GET, "/api/respuestas/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.PUT, "/api/respuestas/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.DELETE, "/api/respuestas/**").hasRole("USER");
+
+                    http.requestMatchers(HttpMethod.GET, "/api/topicos/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/api/topicos/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.PUT, "/api/topicos/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.DELETE, "/api/topicos/**").hasRole("USER");
 
                     //el resto de endpoints - no especificado (siempre y cuando tengas acceso).
 

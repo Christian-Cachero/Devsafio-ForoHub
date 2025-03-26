@@ -2,9 +2,7 @@ package com.alurachallengers.forohub.model;
 
 import com.alurachallengers.forohub.model.enums.Curso;
 import com.alurachallengers.forohub.model.enums.EstadoTopico;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,6 +11,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -48,7 +48,10 @@ public class Topico {
     //@JsonBackReference
     private Usuario autor;
 
-/*    @PrePersist
+    @OneToMany(mappedBy = "topico", cascade = CascadeType.ALL)
+    private List<Respuesta> respuestas = new ArrayList<>();
+
+/*  @PrePersist
     protected void onCreate(){
         fechaCreacion = LocalDate.now();
     }*/
